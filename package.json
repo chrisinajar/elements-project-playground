@@ -1,0 +1,19 @@
+{
+  "name": "elements-project-playground",
+  "version": "0.0.0",
+  "description": "Scripts and makefiles for playing with sidechains without worrying about building them",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrisinajar/elements-project-playground.git"
+  },
+  "author": "Chris Vickery <chrisinajar@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chrisinajar/elements-project-playground/issues"
+  },
+  "homepage": "https://github.com/chrisinajar/elements-project-playground#readme"
+}
