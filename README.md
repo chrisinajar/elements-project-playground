@@ -1,6 +1,8 @@
 # Elements Project Playground
 Scripts and makefiles for playing with sidechains without worrying about building them. See the [Elements Project](https://elementsproject.org).
 
+**TL;DR** `make run-alpha`
+
 ##### Purpose
 Building a side chain is a multi-step process with all kinds of dependencies that can go wrong. The goal of this repository is to make this as easy as humanly possible. There should be no reason not to play with a sidechain if you're interested, so lets make it effortless so that it actually happens.
 
@@ -28,6 +30,10 @@ $ make run-alpha
 to stop them again, use
 ```
 $ make stop
+```
+You can also clean up all the built assets (including the vagrant image) with
+```
+$ make clean
 ```
 
 # Contributing
