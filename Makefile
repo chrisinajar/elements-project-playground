@@ -8,9 +8,10 @@ BINDIR=${ROOT}/bin/
 ELEMENTSDIR=${ROOT}/elements/
 ALPHAD=${ROOT}/bin/alphad
 BITCOIND=${ROOT}/bin/bitcoind
+NODE_MODULES=${ROOT}/node_modules
 NEW_UUID=$(shell date | md5)
 
-.PHONY: all requirements clean alpha mainchain run-mainchain run-alpha stop
+.PHONY: all requirements clean alpha mainchain run-mainchain run-alpha stop build
 
 all: requirements
 $(VAGRANTENV): Vagrantfile setup.sh
@@ -19,13 +20,19 @@ $(VAGRANTENV): Vagrantfile setup.sh
 	vagrant provision
 	touch "$@"
 
-requirements: $(VAGRANTENV)
+$(NODE_MODULES): package.json
+	npm install
+	touch "$@"
+
+requirements: $(VAGRANTENV) $(NODE_MODULES)
 clean: 
 	- vagrant destroy
 	rm -rf ${VAGRANTENV}
 	rm -rf $(USERENV)
 	rm -rf $(ELEMENTSDIR)
 	rm -rf $(BINDIR)
+
+build: mainchain alpha
 
 $(ALPHAD): $(VAGRANTENV)
 	vagrant up
