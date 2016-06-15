@@ -13,4 +13,6 @@ apt-get -y install \
 
 # Get source code
 git clone https://github.com/ElementsProject/elements
-cd elements
+git clone https://github.com/bitcoin/secp256k1
+git clone https://github.com/blockstream/contracthashtool
+git clone https://github.com/jgarzik/python-bitcoinrpc

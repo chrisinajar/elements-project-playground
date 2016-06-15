@@ -38,3 +38,7 @@ jspm_packages
 .vagrant
 bin/
 elements/
+contracthashtool/
+install/
+secp256k1/
+python-bitcoinrpc/

@@ -8,6 +8,10 @@ BINDIR=${ROOT}/bin/
 ELEMENTSDIR=${ROOT}/elements/
 ALPHAD=${ROOT}/bin/alphad
 BITCOIND=${ROOT}/bin/bitcoind
+SECPINSTALL=${ROOT}/install
+CCHT=${ROOT}/contracthashtool/contracthashtool
+CCHTDIR=${ROOT}/contracthashtool
+SECPDIR=${ROOT}/secp256k1
 NODE_MODULES=${ROOT}/node_modules
 NEW_UUID=$(shell date | md5)
 
@@ -31,6 +35,9 @@ clean:
 	rm -rf $(USERENV)
 	rm -rf $(ELEMENTSDIR)
 	rm -rf $(BINDIR)
+	rm -rf $(SECPDIR)
+	rm -rf $(SECPINSTALL)
+	rm -rf $(CCHTDIR)
 
 build: mainchain alpha
 
@@ -43,6 +50,18 @@ $(BITCOIND): $(VAGRANTENV)
 	vagrant up
 	vagrant ssh -c 'cd /vagrant/ && ./build.sh mainchain'
 mainchain: $(BITCOIND)
+
+.PHONY: secp256k1
+secp256k1: $(SECPINSTALL)
+$(SECPINSTALL): $(VAGRANTENV) secp256k1.sh
+	vagrant up
+	vagrant ssh -c 'cd /vagrant/ && ./secp256k1.sh'
+
+.PHONY: contracthashtool
+contracthashtool: $(CCHT)
+$(CCHT): $(VAGRANTENV) $(SECPINSTALL) contracthashtool.sh
+	vagrant up
+	vagrant ssh -c 'cd /vagrant/ && ./contracthashtool.sh'
 
 stop:
 	vagrant up
