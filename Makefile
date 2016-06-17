@@ -13,7 +13,7 @@ CCHT=${ROOT}/contracthashtool/contracthashtool
 CCHTDIR=${ROOT}/contracthashtool
 SECPDIR=${ROOT}/secp256k1
 NODE_MODULES=${ROOT}/node_modules
-NEW_UUID=$(shell date | md5)
+NEW_UUID=goddamnedrandompasswords
 
 .PHONY: all requirements clean alpha mainchain run-mainchain run-alpha stop build
 
@@ -67,10 +67,18 @@ stop:
 	vagrant up
 	- vagrant ssh -c 'killall alphad ; killall bitcoind'
 
-run-alpha: stop alpha run-mainchain
+run-alpha: env stop alpha run-mainchain
+	echo ${NEW_UUID}
 	vagrant ssh -c "cd /vagrant/ && ./bin/alphad -rpcuser=vagrantrpc -rpcpassword=${NEW_UUID} -testnet -rpcconnect=127.0.0.1 -rpcconnectport=18332 -tracksidechain=all -txindex -blindtrust=true" &
 	sleep 5
 
-run-mainchain: stop mainchain
+run-mainchain: env stop mainchain
+	echo ${NEW_UUID}
 	vagrant ssh -c "cd /vagrant/ && ./bin/bitcoind -rpcuser=vagrantrpc -rpcpassword=${NEW_UUID} -testnet -txindex" &
 	sleep 5
+
+.PHONY: env
+env:
+	echo > $(USERENV)
+	echo "export RPC_USER=vagrantrpc" >> $(USERENV)
+	echo "export RPC_PASS=${NEW_UUID}" >> $(USERENV)
