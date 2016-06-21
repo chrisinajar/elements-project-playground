@@ -26,7 +26,7 @@ var _WALLET_FILE = path.join(__dirname, '../.wallet.json');
 var BITCOIN_CLI = './bin/bitcoin-cli -testnet -rpcuser=' + env.user + ' -rpcpassword=' + env.pass + ' ';
 
 // assign wallet variable using load
-var _WALLET;
+var _WALLET = {};
 load();
 
 function bitcoinCLI () {
@@ -65,7 +65,11 @@ function save (wallet) {
   jsonfile.writeFileSync(_WALLET_FILE, wallet);
 }
 function load () {
-  _WALLET = jsonfile.readFileSync(_WALLET_FILE);
+  try {
+    _WALLET = jsonfile.readFileSync(_WALLET_FILE);
+  } catch (e) {
+    _WALLET = {};
+  }
   return _WALLET;
 }
 // mqA438AUw4hCZZ8xuhTbhq1CYmiRWTeNEx
@@ -193,7 +197,7 @@ function claimOnSidechain () {
       console.log('It worked!');
     })
     .then(function () {
-      return runCommandAsync('./sidechain-manipulation.sh claim-on-sidechain ' + [_WALLET.address, _WALLET.nonce, _WALLET.txId].join(' '));
+      return runCommandAsync('./sidechain-manipulation.sh claim-on-sidechain ' + [_WALLET.sidechain_p2sh, _WALLET.nonce, _WALLET.txId].join(' '));
     })
     .then(function (data) {
       console.log(arguments);
