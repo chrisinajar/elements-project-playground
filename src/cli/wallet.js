@@ -42,12 +42,38 @@ exports.builder = function (yargs) {
       }
     )
     .command(
-      'send-to-sidechain',
+      'send',
       'Send the contents of your testnet wallet to the sidechain',
       function (yargs) {
       },
       function (argv) {
-        Wallet.sendToSideChain();
+        Wallet.sendToSideChain()
+          .then(Wallet.claimOnSidechain)
+          .catch(console.error.bind(console));
+      }
+    )
+    .command(
+      'tx-status',
+      'Check the status of the send-to-chain transaction',
+      function (yargs) {},
+      function (argv) {
+        var wallet = Wallet.load();
+        if (!wallet.txId) {
+          return console.error('Please use `wallet send` to setup the transaction');
+        }
+        Wallet.getBlockForTransaction(wallet.txId)
+          .then(function (data) {
+            console.log(data);
+          });
+      }
+    )
+    .command(
+      'claim',
+      'Claim the alpha wallet containing the pegged testnet coins',
+      function (yargs) {
+      },
+      function (argv) {
+        Wallet.claimOnSidechain();
       }
     )
     .demand(2);

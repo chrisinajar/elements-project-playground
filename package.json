@@ -20,11 +20,15 @@
     "semistandard": "^8.0.0"
   },
   "dependencies": {
+    "ap": "^0.2.0",
+    "bluebird": "^3.4.1",
     "debug": "^2.2.0",
     "faucet-testnet": "^0.1.0",
     "jsonfile": "^2.3.1",
+    "jsonic": "^0.2.2",
     "node-vagrant": "^1.0.7",
     "once": "^1.3.3",
+    "to-array": "^0.1.4",
     "yargs": "^4.7.1"
   }
 }
