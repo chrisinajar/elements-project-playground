@@ -5,7 +5,6 @@ set -e
 BRANCH=$1
 
 cd /vagrant/
-[ -d ./bin ] || mkdir bin
 
 cd elements
 git checkout ${BRANCH}
@@ -18,7 +17,7 @@ make
 
 if [ "$BRANCH" == "mainchain" ]
 then
-  mv src/bitcoin{d,-cli,-tx} ../bin/
+  mv src/bitcoin{d,-cli,-tx} ../
 else
-  mv src/alpha{d,-cli,-tx} ../bin/
+  mv src/alpha{d,-cli,-tx} ../
 fi

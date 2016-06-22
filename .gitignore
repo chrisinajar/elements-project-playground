@@ -44,3 +44,9 @@ secp256k1/
 python-bitcoinrpc/
 .env
 .wallet.json
+alpha-cli
+alpha-tx
+alphad
+bitcoin-cli
+bitcoin-tx
+bitcoind

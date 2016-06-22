@@ -76,5 +76,14 @@ exports.builder = function (yargs) {
         Wallet.claimOnSidechain();
       }
     )
+    .command(
+      'spend',
+      'Spend the transaction on the sidechain',
+      function (yargs) {
+      },
+      function (argv) {
+        Wallet.spendOnSidechain();
+      }
+    )
     .demand(2);
 };

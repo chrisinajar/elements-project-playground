@@ -16,14 +16,15 @@ module.exports = {
   sendToSideChain: sendToSideChain,
   claimOnSidechain: claimOnSidechain,
   getTransaction: getTransaction,
-  getBlockForTransaction: getBlockForTransaction
+  getBlockForTransaction: getBlockForTransaction,
+  spendOnSidechain: spendOnSidechain
 };
 
 var bitcoinCLIAsync = Promise.promisify(bitcoinCLI);
 var runCommandAsync = Promise.promisify(runCommand);
 
 var _WALLET_FILE = path.join(__dirname, '../.wallet.json');
-var BITCOIN_CLI = './bin/bitcoin-cli -testnet -rpcuser=' + env.user + ' -rpcpassword=' + env.pass + ' ';
+var BITCOIN_CLI = './bitcoin-cli -testnet -rpcuser=' + env.user + ' -rpcpassword=' + env.pass + ' ';
 
 // assign wallet variable using load
 var _WALLET = {};
@@ -75,6 +76,9 @@ function load () {
 // mqA438AUw4hCZZ8xuhTbhq1CYmiRWTeNEx
 
 function sendToSideChain () {
+  if (_WALLET.sidechain_p2sh && _WALLET.sidechain_1of1) {
+    return Promise.resolve(_WALLET);
+  }
   // sidechain-manipulation.py generate-one-of-one-multisig sidechain-wallet
   // we use the .sh wrapper to ensure the elements directory is on the right version before execution
   return runCommandAsync('./sidechain-manipulation.sh generate-one-of-one-multisig sidechain-wallet')
@@ -192,15 +196,45 @@ function checkBlockDepth (txId, needed) {
 }
 
 function claimOnSidechain () {
-  waitForBlockDepth()
+  return waitForBlockDepth()
     .then(function () {
       console.log('It worked!');
     })
     .then(function () {
-      return runCommandAsync('./sidechain-manipulation.sh claim-on-sidechain ' + [_WALLET.sidechain_p2sh, _WALLET.nonce, _WALLET.txId].join(' '));
+      if (_WALLET.sidechain_txid) {
+        return _WALLET.sidechain_txid;
+      }
+      return runCommandAsync('./sidechain-manipulation.sh claim-on-sidechain ' + [_WALLET.sidechain_p2sh, _WALLET.nonce, _WALLET.txId].join(' '))
+        .then(function (data) {
+          var txId = null;
+          data
+            .split('\n')
+            .forEach(function (line) {
+              if (line.substr(0, 16) === 'Resulting txid: ') {
+                _WALLET.sidechain_txid = txId;
+              }
+            });
+          return txId;
+        });
     })
     .then(function (data) {
-      console.log(arguments);
+      _WALLET.sidechain_txid = data;
+      save();
+      return data;
+    });
+}
+
+function spendOnSidechain () {
+  // spend-from-claim
+  claimOnSidechain()
+    .then(function (txId) {
+      return runCommandAsync(['./sidechain-manipulation.sh spend-from-claim', txId, _WALLET.sidechain_1of1].join(' '));
+    })
+    .then(function (data) {
+      console.log(data);
+    })
+    .catch(function (err) {
+      console.dir(err);
     });
 }
 
